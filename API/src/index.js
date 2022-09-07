@@ -60,11 +60,23 @@ app.post('/note', async (req, res) => {
     }
 })
 
+app.delete('/note/:id', async (req, res, next) => {
+    try {
+        const {id} = req.params;
+        const deleted = await Note.findByIdAndRemove(id);
+        if(deleted === null) return res.status(404).json({error: 'Note not found'})
+        res.send(deleted)
+
+    } catch (error) {
+        next(error)
+    }
+})
+
 app.use((error, req, res, next) => {
     console.error(error);
 
     if (error.name === 'CastError'){
-        return res.status(400).send('Invalid ID').end()
+        return res.status(400).json({error:'Invalid ID'}).end()
     } else {
         return res.status(500).end()
     }
