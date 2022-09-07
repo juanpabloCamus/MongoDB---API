@@ -21,3 +21,21 @@ app.get('/notes', async (req, res) => {
         console.log(error);
     }
 })
+
+app.post('note', async (req, res) => {
+    try {
+        const note = req.body;
+        if(!note.content) return res.status(400).send("Missing data!");
+
+        const newNote = new Note({
+            content: note.content,
+            date: new Date(),
+            important: note.important || false
+        })
+        await newNote.save();
+        res.send(newNote)
+
+    } catch (error) {
+        console.log(error);
+    }
+})
