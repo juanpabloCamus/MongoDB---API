@@ -7,6 +7,14 @@ const noteSchema = new Schema({
     important: Boolean
 })
 
+noteSchema.set('toJSON', {
+    transform: (document, returnedObject) => {
+        returnedObject.id = returnedObject._id
+        delete returnedObject._id
+        delete returnedObject.__v
+    }
+})
+
 //Crear modelo, poner nombre en singular
 const Note = model('Note', noteSchema);
 
