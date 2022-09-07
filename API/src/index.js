@@ -1,3 +1,4 @@
+require('dotenv').config()
 require('./mongo.js')
 
 const express = require('express');
