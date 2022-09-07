@@ -22,7 +22,20 @@ app.get('/notes', async (req, res) => {
     }
 })
 
-app.post('note', async (req, res) => {
+app.get('/note/:id', async (req, res) => {
+    try {
+        const {id} = req.params;
+        if(!id) return res.status(400).send('Missing data!');
+
+        const note = await Note.findById(id);
+        res.send(note)
+
+    } catch (error) {
+        console.log(error);
+    }
+})
+
+app.post('/note', async (req, res) => {
     try {
         const note = req.body;
         if(!note.content) return res.status(400).send("Missing data!");
