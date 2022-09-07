@@ -18,27 +18,27 @@ app.get('/notes', async (req, res) => {
     try {
         if(important !== undefined){
             const response = await Note.find({important:true});
-            res.send(response)
+            return res.send(response)
         }
         else{
             const response = await Note.find()
-            res.send(response)
+            return res.send(response)
         }
     } catch (error) {
-        console.log(error);
+        console.error(error);
     }
 })
 
-app.get('/note/:id', async (req, res) => {
+app.get('/note/:id', async (req, res, next) => {
     try {
         const {id} = req.params;
         if(!id) return res.status(400).send('Missing data!');
 
         const note = await Note.findById(id);
-        res.send(note)
+        return res.send(note)
 
     } catch (error) {
-        console.log(error);
+        next(error)
     }
 })
 
@@ -53,9 +53,19 @@ app.post('/note', async (req, res) => {
             important: note.important || false
         })
         await newNote.save();
-        res.send(newNote)
+        return res.send(newNote)
 
     } catch (error) {
         console.log(error);
+    }
+})
+
+app.use((error, req, res, next) => {
+    console.error(error);
+
+    if (error.name === 'CastError'){
+        return res.status(400).send('Invalid ID').end()
+    } else {
+        return res.status(500).end()
     }
 })
