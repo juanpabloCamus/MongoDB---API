@@ -14,9 +14,16 @@ app.listen(3000, ()=>{
 })
 
 app.get('/notes', async (req, res) => {
+    const {important} = req.query
     try {
-        const response = await Note.find()
-        res.send(response)
+        if(important !== undefined){
+            const response = await Note.find({important:true});
+            res.send(response)
+        }
+        else{
+            const response = await Note.find()
+            res.send(response)
+        }
     } catch (error) {
         console.log(error);
     }
