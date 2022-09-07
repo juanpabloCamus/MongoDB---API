@@ -60,6 +60,26 @@ app.post('/note', async (req, res) => {
     }
 })
 
+app.put('/note/:id', async (req, res, next) => {
+    try {
+        const {id} = req.params;
+        const note = req.body;
+
+        const newInfo = {
+            content: note.content,
+            important: note.important || false
+        }
+
+        const update = await Note.findByIdAndUpdate(id, newInfo, {new: true});
+        if(update === null) return res.status(404).json({error: 'Note not found'});
+
+        res.send(update)
+
+    } catch (error) {
+        next(error)
+    }
+})
+
 app.delete('/note/:id', async (req, res, next) => {
     try {
         const {id} = req.params;
@@ -80,4 +100,8 @@ app.use((error, req, res, next) => {
     } else {
         return res.status(500).end()
     }
+})
+
+app.use((req, res, next) => {
+    res.status(404).end()
 })
