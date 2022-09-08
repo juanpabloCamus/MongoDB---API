@@ -6,11 +6,17 @@ notesRouter.get('/', async (req, res) => {
     const {important} = req.query
     try {
         if(important !== undefined){
-            const response = await Note.find({important:true});
+            const response = await Note.find({important:true}).populate('user',{
+                username:1,
+                name: 1
+            });
             return res.send(response)
         }
         else{
-            const response = await Note.find()
+            const response = await Note.find().populate('user',{
+                username:1,
+                name: 1
+            })
             return res.send(response)
         }
     } catch (error) {
