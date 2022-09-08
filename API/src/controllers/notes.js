@@ -1,5 +1,6 @@
 const notesRouter = require('express').Router();
 const Note = require('../models/Note.js');
+const User = require('../models/User.js');
 
 notesRouter.get('/', async (req, res) => {
     const {important} = req.query
@@ -35,13 +36,21 @@ notesRouter.post('/', async (req, res) => {
         const note = req.body;
         if(!note.content) return res.status(400).send("Missing data!");
 
+        const user = await User.findById(note.userId);
+        if (user === null) return res.status(400).send('You need to login to create a note')
+
         const newNote = new Note({
             content: note.content,
             date: new Date(),
-            important: note.important || false
+            important: note.important || false,
+            user:user._id
         })
-        await newNote.save();
-        return res.send(newNote)
+
+        const savedNote = await newNote.save();
+        user.notes = user.notes.concat(savedNote._id);
+        await user.save()
+        
+        return res.send(savedNote);
 
     } catch (error) {
         console.log(error);
