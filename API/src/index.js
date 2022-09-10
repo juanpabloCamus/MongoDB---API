@@ -4,13 +4,17 @@ require('./mongo.js')
 const express = require('express');
 const app = express();
 const cors = require('cors');
+const morgan = require('morgan');
 
 const usersRouter = require('./controllers/users');
-const notesRouter = require('./controllers/notes')
+const notesRouter = require('./controllers/notes');
+const loginRouter = require('./controllers/login');
 
+app.use(morgan('dev'))
 app.use(cors());
 app.use(express.json())
 
+app.use('/api/login', loginRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/notes', notesRouter);
 

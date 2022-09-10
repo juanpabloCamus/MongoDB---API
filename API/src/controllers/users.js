@@ -19,7 +19,10 @@ usersRouter.get('/', async (req, res) => {
 usersRouter.post('/', async (req, res) => {
     const {username, name, password} = req.body;
 
-    const passwordHash = await bcrypt.hash(password, 10)
+    const findExistingUsername = await User.findOne({ username });
+    if(findExistingUsername !== null) return res.status(400).send('This username already exists!')
+
+    const passwordHash = await bcrypt.hash(password, 10);
 
     const user = new User({
         username,
@@ -32,4 +35,4 @@ usersRouter.post('/', async (req, res) => {
     res.send(savedUser)
 })
 
-module.exports = usersRouter
+module.exports = usersRouter    
